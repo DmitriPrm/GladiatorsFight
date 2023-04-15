@@ -1,30 +1,12 @@
 ﻿
 #include <iostream>
-
+#include <vector>
+#include <map>
 using namespace std;
-
-class Gladiator
-{
-	string name;
-	int health;
-public: 
-	Gladiator(string name)
-	{
-		this->name = name;
-	}
-	string get_name()
-	{
-		return name;
-	}
-	void set_name(string name)
-	{
-		this->name = name;
-	}
-};
 
 class Weapon
 {
-protected: 
+protected:
 	int damage;
 public:
 	Weapon()
@@ -45,16 +27,16 @@ public:
 	}
 };
 
-class Defence
+class Armor
 {
-protected: 
+protected:
 	int armor;
-public: 
-	Defence()
+public:
+	Armor()
 	{
 
 	}
-	Defence(int armor)
+	Armor(int armor)
 	{
 		this->armor = armor;
 	}
@@ -82,26 +64,65 @@ public:
 	Spear() : Weapon() { damage = 5; }
 };
 
-class Helmet : public Defence
+class Helmet : public Armor
 {
 public:
-	Helmet(int armor) : Defence(armor) {}
-	Helmet() : Defence() { armor = 5; }
+	Helmet(int armor) : Armor(armor) {}
+	Helmet() : Armor() { armor = 5; }
 };
 
-class ChestPlate : public Defence
+class ChestPlate : public Armor
 {
 public:
-	ChestPlate(int armor) : Defence(armor) {}
-	ChestPlate() : Defence() { armor = 5; }
+	ChestPlate(int armor) : Armor(armor) {}
+	ChestPlate() : Armor() { armor = 5; }
 };
 
-class Greaves : public Defence
+class Greaves : public Armor
 {
 public:
-	Greaves(int armor) : Defence(armor) {}
-	Greaves() : Defence() { armor = 5; }
+	Greaves(int armor) : Armor(armor) {}
+	Greaves() : Armor() { armor = 5; }
 };
+
+class Gladiator
+{
+	string name;
+	int health;
+	Weapon* weapon;
+	map<string, Armor*> armor;
+public: 
+	Gladiator(string name)
+	{
+		this->name = name;
+		armor["Helmet"] = nullptr;
+		armor["ChestPlate"] = nullptr;
+		armor["Greaves"] = nullptr;
+		armor["Shield"] = nullptr;
+	}
+	string get_name()
+	{
+		return name;
+	}
+	void set_name(string name)
+	{
+		this->name = name;
+	}
+	Weapon* get_weapon()
+	{
+		return weapon;
+	}
+	void set_weapon(Weapon* weapon)
+	{
+		this->weapon = weapon;
+	}
+	void add_armor(Armor* armor)
+	{
+		
+	}
+
+};
+
  
 /*
 Реализовать иерархии классов "Гладиаторы", "Оружие гладиаторов" и "Защитные средства".
@@ -111,5 +132,9 @@ public:
 
 int main()
 {
-
+	Gladiator max("Maximus");
+	Sword sw;
+	max.set_weapon(&sw);
+	Greaves gr;
+	max.add_armor(&gr);
 }
