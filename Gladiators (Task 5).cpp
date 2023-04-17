@@ -8,31 +8,15 @@
 
 using namespace std;
 
-void sleep(int msec) 
-{
-	std::chrono::milliseconds time(msec);
-	std::this_thread::sleep_for(time);
-}
-
 class Weapon
 {
 protected:
 	int damage;
 public:
 	Weapon() { }
-	Weapon(int damage)
-	{
-		this->damage = damage;
-	}
-	int get_damage()
-	{
-		return damage;
-	}
-	void set_damage(int damage)
-	{
-		if (!damage) throw exception("Damage must be more than zero!");
-		this->damage = damage;
-	}
+	Weapon(int damage);
+	int get_damage();
+	void set_damage(int damage);
 };
 
 class Armor
@@ -42,23 +26,10 @@ protected:
 	string type;
 public:
 	Armor() { }
-	Armor(int armor)
-	{
-		this->armor = armor;
-	}
-	int get_armor()
-	{
-		return armor;
-	}
-	void set_armor(int armor)
-	{
-		if (!armor) throw exception("Armor must be more than zero!");
-		this->armor = armor;
-	}
-	string get_type()
-	{
-		return type;
-	}
+	Armor(int armor);
+	int get_armor();
+	void set_armor(int armor);
+	string get_type();
 };
 
 class Sword : public Weapon
@@ -112,8 +83,81 @@ class Gladiator
 	map<string, Armor*> armorList;
 	int armor;
 	int skill;
-public: 
-	Gladiator(string name, int skill)
+public:
+	Gladiator(string name, int skill);
+	string get_name();
+	void set_name(string name);
+	int get_skill();
+	void set_skill(int skill);
+	Weapon* get_weapon();
+	int get_health();
+	void set_health(int health);
+	void set_weapon(Weapon* weapon);
+	bool get_isAlive();
+	void set_isAlive(bool isAlive);
+	void add_armor(Armor* armor);
+	void reset_armor(int value);
+	int get_armor();
+	void hit(Gladiator* gl);
+};
+
+class Fight
+{
+	Gladiator* first;
+	Gladiator* second;
+public:
+	Fight(Gladiator* first, Gladiator* second);
+	void print_hp();
+	void start_fight();
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+void sleep(int msec)
+{
+	std::chrono::milliseconds time(msec);
+	std::this_thread::sleep_for(time);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+Weapon::Weapon(int damage)
+{
+	this->damage = damage;
+}
+int Weapon::get_damage()
+{
+	return damage;
+}
+void Weapon::set_damage(int damage)
+{
+	if (!damage) throw exception("Damage must be more than zero!");
+	this->damage = damage;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+Armor::Armor(int armor)
+{
+	this->armor = armor;
+}
+int Armor::get_armor()
+{
+	return armor;
+}
+void Armor::set_armor(int armor)
+{
+	if (!armor) throw exception("Armor must be more than zero!");
+	this->armor = armor;
+}
+string Armor::get_type()
+{
+	return type;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+	Gladiator::Gladiator(string name, int skill)
 	{
 		if (!skill) throw exception ("Skill must be more than zero!");
 		this->name = name;
@@ -121,63 +165,63 @@ public:
 		health = 100;
 		this->skill = skill;
 	}
-	string get_name()
+	string Gladiator::get_name()
 	{
 		return name;
 	}
-	void set_name(string name)
+	void Gladiator::set_name(string name)
 	{
 		this->name = name;
 	}
-	int get_skill()
+	int Gladiator::get_skill()
 	{
 		return skill;
 	}
-	void set_skill(int skill)
+	void Gladiator::set_skill(int skill)
 	{
 		if (!skill) throw exception("Skill must be more than zero!");
 		this->skill = skill;
 	}
-	Weapon* get_weapon()
+	Weapon* Gladiator::get_weapon()
 	{
 		return weapon;
 	}
-	int get_health()
+	int Gladiator::get_health()
 	{
 		return health;
 	}
-	void set_health(int health)
+	void Gladiator::set_health(int health)
 	{
 		if (!health) throw exception("Health must be more than zero!");
 		this->health = health;
 	}
-	void set_weapon(Weapon* weapon)
+	void Gladiator::set_weapon(Weapon* weapon)
 	{
 		if (!weapon) throw exception("Wrong weapon!");
 		this->weapon = weapon;
 	}
-	bool get_isAlive()
+	bool Gladiator::get_isAlive()
 	{
 		return isAlive;
 	}
-	void set_isAlive(bool isAlive)
+	void Gladiator::set_isAlive(bool isAlive)
 	{
 		this->isAlive = isAlive;
 	}
-	void add_armor(Armor* armor)
+	void Gladiator::add_armor(Armor* armor)
 	{
 		this->armorList[armor->get_type()] = armor;
 		reset_armor(armor->get_armor());
 	}
-	void reset_armor(int value)
+	void Gladiator::reset_armor(int value)
 	{
 		armor += value;
 	}
-	int get_armor()
+	int Gladiator::get_armor()
 	{
 		return armor;
 	}
-	void hit(Gladiator* gl)
+	void Gladiator::hit(Gladiator* gl)
 	{
 		bool miss = rand() % 10 < skill / 10;
 		bool superHit = rand() % 10 < skill / 100;
@@ -213,24 +257,20 @@ public:
 			gl->health -= weapon->get_damage();
 		}
 	}
-};
 
-class Fight
-{
-	Gladiator* first;
-	Gladiator* second;
-public: 
-	Fight(Gladiator* first, Gladiator* second)
+//////////////////////////////////////////////////////////////////////////////
+
+	Fight::Fight(Gladiator* first, Gladiator* second)
 	{
 		this->first = first;
 		this->second = second;
 	};
-	void print_hp()
+	void Fight::print_hp()
 	{
 		cout << setw(3) << right << first->get_armor() << "/" << setw(3) <<  left << first->get_health() << " | "
 			<< setw(3) << right << second->get_armor() << "/" << setw(3) << left << second->get_health() << endl;
 	}
-	void start_fight()
+	void Fight::start_fight()
 	{
 		cout << setw(8) << first->get_name() << setw(8) << second->get_name() << endl;
 		cout << setw(8) << "ARMOR/HP " << setw(8) << "ARMOR/HP" << endl;
@@ -259,7 +299,7 @@ public:
 			cout << endl << " --- Гладиатор " << second->get_name() << " победил! --- " << endl;
 		}
 	}
-};
+
 
 /*
 Реализовать иерархии классов "Гладиаторы", "Оружие гладиаторов" и "Защитные средства".
@@ -289,5 +329,4 @@ int main()
 
 	Fight f(&max, &hex);
 	f.start_fight();
-
 }
