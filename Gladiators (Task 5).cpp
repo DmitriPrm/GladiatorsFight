@@ -157,148 +157,148 @@ string Armor::get_type()
 
 //////////////////////////////////////////////////////////////////////////////
 
-	Gladiator::Gladiator(string name, int skill)
+Gladiator::Gladiator(string name, int skill)
+{
+	if (!skill) throw exception("Skill must be more than zero!");
+	this->name = name;
+	armor = 0;
+	health = 100;
+	this->skill = skill;
+}
+string Gladiator::get_name()
+{
+	return name;
+}
+void Gladiator::set_name(string name)
+{
+	this->name = name;
+}
+int Gladiator::get_skill()
+{
+	return skill;
+}
+void Gladiator::set_skill(int skill)
+{
+	if (!skill) throw exception("Skill must be more than zero!");
+	this->skill = skill;
+}
+Weapon* Gladiator::get_weapon()
+{
+	return weapon;
+}
+int Gladiator::get_health()
+{
+	return health;
+}
+void Gladiator::set_health(int health)
+{
+	if (!health) throw exception("Health must be more than zero!");
+	this->health = health;
+}
+void Gladiator::set_weapon(Weapon* weapon)
+{
+	if (!weapon) throw exception("Wrong weapon!");
+	this->weapon = weapon;
+}
+bool Gladiator::get_isAlive()
+{
+	return isAlive;
+}
+void Gladiator::set_isAlive(bool isAlive)
+{
+	this->isAlive = isAlive;
+}
+void Gladiator::add_armor(Armor* armor)
+{
+	this->armorList[armor->get_type()] = armor;
+	reset_armor(armor->get_armor());
+}
+void Gladiator::reset_armor(int value)
+{
+	armor += value;
+}
+int Gladiator::get_armor()
+{
+	return armor;
+}
+void Gladiator::hit(Gladiator* gl)
+{
+	bool miss = rand() % 10 < skill / 10;
+	bool superHit = rand() % 10 < skill / 100;
+	if (!miss)
 	{
-		if (!skill) throw exception ("Skill must be more than zero!");
-		this->name = name;
-		armor = 0;
-		health = 100;
-		this->skill = skill;
+		return;
 	}
-	string Gladiator::get_name()
+	if (superHit)
 	{
-		return name;
-	}
-	void Gladiator::set_name(string name)
-	{
-		this->name = name;
-	}
-	int Gladiator::get_skill()
-	{
-		return skill;
-	}
-	void Gladiator::set_skill(int skill)
-	{
-		if (!skill) throw exception("Skill must be more than zero!");
-		this->skill = skill;
-	}
-	Weapon* Gladiator::get_weapon()
-	{
-		return weapon;
-	}
-	int Gladiator::get_health()
-	{
-		return health;
-	}
-	void Gladiator::set_health(int health)
-	{
-		if (!health) throw exception("Health must be more than zero!");
-		this->health = health;
-	}
-	void Gladiator::set_weapon(Weapon* weapon)
-	{
-		if (!weapon) throw exception("Wrong weapon!");
-		this->weapon = weapon;
-	}
-	bool Gladiator::get_isAlive()
-	{
-		return isAlive;
-	}
-	void Gladiator::set_isAlive(bool isAlive)
-	{
-		this->isAlive = isAlive;
-	}
-	void Gladiator::add_armor(Armor* armor)
-	{
-		this->armorList[armor->get_type()] = armor;
-		reset_armor(armor->get_armor());
-	}
-	void Gladiator::reset_armor(int value)
-	{
-		armor += value;
-	}
-	int Gladiator::get_armor()
-	{
-		return armor;
-	}
-	void Gladiator::hit(Gladiator* gl)
-	{
-		bool miss = rand() % 10 < skill / 10;
-		bool superHit = rand() % 10 < skill / 100;
-		if (!miss)
+		int superHitCount = rand() % 5;
+		for (int i = 0; i < superHitCount; i++)
 		{
+			hit(gl);
+		}
+		return;
+	}
+	if (gl->get_armor())
+	{
+		if (gl->get_armor() - weapon->get_damage() <= 0)
+		{
+			gl->armor = 0;
 			return;
 		}
-		if (superHit)
+		gl->reset_armor(-weapon->get_damage());
+	}
+	else
+	{
+		if (gl->health - weapon->get_damage() <= 0)
 		{
-			int superHitCount = rand() % 5;
-			for (int i = 0; i < superHitCount; i++)
-			{
-				hit(gl);
-			}
+			gl->isAlive = false;
 			return;
 		}
-		if (armor)
-		{
-			if (gl->get_armor() - weapon->get_damage() <= 0)
-			{
-				armor = 0;
-				return;
-			}
-			gl->reset_armor(-weapon->get_damage());
-		}
-		else
-		{
-			if (gl->health - weapon->get_damage() <= 0)
-			{
-				gl->isAlive = false;
-				return;
-			}
-			gl->health -= weapon->get_damage();
-		}
+		gl->health -= weapon->get_damage();
 	}
+}
 
 //////////////////////////////////////////////////////////////////////////////
 
-	Fight::Fight(Gladiator* first, Gladiator* second)
+Fight::Fight(Gladiator* first, Gladiator* second)
+{
+	this->first = first;
+	this->second = second;
+};
+void Fight::print_hp()
+{
+	cout << setw(3) << right << first->get_armor() << "/" << setw(3) << left << first->get_health() << " | "
+		<< setw(3) << right << second->get_armor() << "/" << setw(3) << left << second->get_health() << endl;
+}
+void Fight::start_fight()
+{
+	cout << setw(8) << first->get_name() << setw(8) << second->get_name() << endl;
+	cout << setw(8) << "ARMOR/HP " << setw(8) << "ARMOR/HP" << endl;
+	print_hp();
+	sleep(500);
+	while (first->get_isAlive() && second->get_isAlive())
 	{
-		this->first = first;
-		this->second = second;
-	};
-	void Fight::print_hp()
-	{
-		cout << setw(3) << right << first->get_armor() << "/" << setw(3) <<  left << first->get_health() << " | "
-			<< setw(3) << right << second->get_armor() << "/" << setw(3) << left << second->get_health() << endl;
-	}
-	void Fight::start_fight()
-	{
-		cout << setw(8) << first->get_name() << setw(8) << second->get_name() << endl;
-		cout << setw(8) << "ARMOR/HP " << setw(8) << "ARMOR/HP" << endl;
+		first->hit(second);
 		print_hp();
 		sleep(500);
-		while (first->get_isAlive() && second->get_isAlive())
+		if (!second->get_isAlive())
 		{
-			first->hit(second);
-			print_hp();
-			sleep(500);
-			if (!second->get_isAlive())
-			{
-				cout << "Гладиатор " << second->get_name() << " мертв!" << endl;
-				break;
-			}
-			second->hit(first);
-			print_hp();
-			sleep(500);
+			cout << "Гладиатор " << second->get_name() << " мертв!" << endl;
+			break;
 		}
-		if (first->get_isAlive())
-		{
-			cout << endl << " --- Гладиатор " << first->get_name() << " победил! --- " << endl;
-		}
-		else
-		{
-			cout << endl << " --- Гладиатор " << second->get_name() << " победил! --- " << endl;
-		}
+		second->hit(first);
+		print_hp();
+		sleep(500);
 	}
+	if (first->get_isAlive())
+	{
+		cout << endl << " --- Гладиатор " << first->get_name() << " победил! --- " << endl;
+	}
+	else
+	{
+		cout << endl << " --- Гладиатор " << second->get_name() << " победил! --- " << endl;
+	}
+}
 
 
 /*
@@ -309,7 +309,7 @@ string Armor::get_type()
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	Gladiator max("Maximus", 100);
+	Gladiator max("Maximus", 50);
 	Helmet h;
 	ChestPlate cp;
 	Greaves g;
